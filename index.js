@@ -134,7 +134,6 @@ app.post("/users/create-user", async (req, res) => {
     const { name, email, phone } = req.body;
     const existingUser = await users.list([Query.equal("email", [email])]);
 
-    res.send(existingUser.users[0]);
     if (existingUser.total) {
       const patient = await databases.listDocuments(
         DATABASE_ID,
