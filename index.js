@@ -6,6 +6,7 @@ import helmet from "helmet";
 import * as sdk from "node-appwrite";
 import { ID, Query } from "node-appwrite";
 import { decodeBase64 } from "./utils.js";
+import { scheduledStatus } from "./constants.js";
 
 dotenv.config({ path: "./.env.local" });
 
@@ -211,15 +212,19 @@ app.get("/api/:key", (req, res) => {
 
     const decryptKey = decodeBase64(passkey);
     if (decryptKey === process.env.PUBLIC_ADMIN_PASSKEY) {
-      // localStorage.setItem("accessKey", encryptedKey);
+      console.log("accessKey", encryptedKey);
       console.log(`========= APPROVED USER!  =========`);
       res.send({ user: "gi" });
+    } else {
+      console.log(`========= UNAUTHORIZED USER!  =========`);
+      res.send({ user: null });
     }
     res.send({ message: "Accessing register" });
   } catch (error) {
+    console.log("Error Code: ", error.code);
     res
       .status(500)
-      .send({ error: "An error occurred while registering the user" });
+      .send({ error: "An error occurred accessing admin dashboard" });
   }
 });
 
@@ -236,15 +241,15 @@ app.get("/admin", async (req, res) => {
         ]);
 
     const scheduledAppointments = appointments.documents.filter(
-      (appointment) => appointment.status === "scheduled"
+      (appointment) => appointment.status === scheduledStatus.SCHEDULED
     );
 
     const pendingAppointments = appointments.documents.filter(
-      (appointment) => appointment.status === "pending"
+      (appointment) => appointment.status === scheduledStatus.PENDING
     );
 
     const cancelledAppointments = appointments.documents.filter(
-      (appointment) => appointment.status === "cancelled"
+      (appointment) => appointment.status === scheduledStatus.CANCELLED
     );
 
     let data = {
