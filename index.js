@@ -42,7 +42,7 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet()); // Adds security headers
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173", // Configure your frontend URL
+    origin: process.env.FRONTEND_URL || "https://vitecare-gi.vercel.app", // Configure your frontend URL
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -60,24 +60,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// // In your server setup
-// app.use((req, res, next) => {
-//   console.log("---INCOMING REQUEST---");
-//   console.log("Method:", req.method);
-//   console.log("Path:", req.path);
-//   console.log("Headers:", req.headers);
-//   console.log("Body:", req.body);
-//   next();
-// });
-
-// // 404 Handler
-// app.use((req, res, next) => {
-//   res.status(404).json({
-//     message: "Route not found",
-//     path: req.path,
-//   });
-// });
-
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -90,7 +72,6 @@ app.use((err, req, res, next) => {
 // GET SINGLE USER
 app.get("/patient/:userId", async (req, res) => {
   try {
-    // const users = new sdk.Users(client);
     const userId = req.params.userId;
     const user = await users.get(userId);
     res.send(JSON.parse(JSON.stringify(user)));
@@ -104,7 +85,6 @@ app.get("/patient/:userId", async (req, res) => {
 // GET SINGLE PATIENT
 app.get("/patient/:patientId", async (req, res) => {
   try {
-    // const databases = new sdk.Databases(client);
     const patientId = req.params.patientId;
     const patient = await databases.getDocument(
       DATABASE_ID,
@@ -122,7 +102,6 @@ app.get("/patient/:patientId", async (req, res) => {
 // POST CURRENT USER BASIC DATA
 app.post("/patient/register", async (req, res) => {
   try {
-    // const databases = new sdk.Databases(client);
     const registerPatient = req.body;
     const newPatient = await databases.createDocument(
       DATABASE_ID,
@@ -152,7 +131,6 @@ app.post("/patient/register", async (req, res) => {
 // }
 app.post("/create-user", async (req, res) => {
   try {
-    // const users = new sdk.Users(client);
     const { name, email, phone } = req.body;
 
     const existingUser = await users.list([Query.equal("email", [email])]);
@@ -183,7 +161,6 @@ app.post("/create-user", async (req, res) => {
 
     // Check for specific error types
     if (error.name === "ValidationError") {
-      // Mongoose validation error
       return res.status(400).json({
         message: "Invalid user data",
         errors: Object.values(error.errors).map((err) => err.message),
