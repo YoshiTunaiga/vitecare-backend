@@ -36,13 +36,13 @@ export const storage = new sdk.Storage(client);
 const app = express();
 
 // SET PORT
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 // Middleware
 app.use(helmet()); // Adds security headers
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://vitecare-gi.vercel.app", // Configure your frontend URL
+    origin: process.env.FRONTEND_URL || "http://localhost:5173/", // Configure your frontend URL
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -132,13 +132,25 @@ app.post("/patient/register", async (req, res) => {
 app.post("/users/create-user", async (req, res) => {
   try {
     const { name, email, phone } = req.body;
-
     const existingUser = await users.list([Query.equal("email", [email])]);
+
+    res.send(existingUser.users[0]);
     if (existingUser.total) {
+      const patient = await databases.listDocuments(
+        DATABASE_ID,
+        PATIENT_COLLECTION_ID,
+        [Query.equal("userId", existingUser.users[0].$id)]
+      );
+      const documentExist = patient.total > 0;
       res.send({
-        message: "User already exists",
-        newUser: existingUser.users[0],
-        isMember: true,
+        message: "Patient already exists",
+        newUser: {
+          $id: existingUser.users[0].$id,
+          name: existingUser.users[0].name,
+          email: existingUser.users[0].email,
+          phone: existingUser.users[0].phone,
+        },
+        isMember: documentExist,
       });
     } else {
       const result = await users.create(
@@ -150,7 +162,7 @@ app.post("/users/create-user", async (req, res) => {
       );
       // Respond with the created user (excluding sensitive information)
       res.send({
-        message: "User registered successfully",
+        message: "User created successfully",
         newUser: result,
         isMember: false,
       });
