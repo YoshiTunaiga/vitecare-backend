@@ -129,7 +129,7 @@ app.post("/patient/register", async (req, res) => {
 //   undefined, "required for password"
 //   name: string.
 // }
-app.post("/create-user", async (req, res) => {
+app.post("/users/create-user", async (req, res) => {
   try {
     const { name, email, phone } = req.body;
 
