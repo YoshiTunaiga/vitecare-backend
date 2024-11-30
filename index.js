@@ -86,6 +86,11 @@ app.get("/patient/:userId", async (req, res) => {
   }
 });
 
+app.head("/patient/:userId", (req, res) => {
+  console.log(`Received HEAD request for ID: ${req.params.id}`);
+  res.status(200).send(); // Example response
+});
+
 // GET SINGLE PATIENT
 app.get("/patient/:patientId", async (req, res) => {
   try {
