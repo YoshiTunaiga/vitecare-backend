@@ -43,7 +43,7 @@ app.use(helmet()); // Adds security headers
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173", // Configure your frontend URL
-    // credentials: true,
+    credentials: true,
     methods: [
       "GET",
       "POST",
