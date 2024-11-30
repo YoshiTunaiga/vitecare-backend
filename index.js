@@ -48,7 +48,7 @@ app.use(
       "http://localhost:5173",
     ], // Configure your frontend URL
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "HEAD"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
